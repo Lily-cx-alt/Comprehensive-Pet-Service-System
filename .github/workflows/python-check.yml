@@ -1,0 +1,35 @@
+# 工作流名称：Python代码自动化检查
+name: Python Code Check
+
+# 触发条件：PR提交、推送到master/特性分支时自动运行
+on:
+  push:
+    branches: [ master, feature/** ]
+  pull_request:
+    branches: [ master ]
+
+# 运行任务
+jobs:
+  check:
+    # 运行环境：Ubuntu系统
+    runs-on: ubuntu-latest
+    steps:
+      # 第一步：拉取仓库代码
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      # 第二步：安装Python环境
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'  # 匹配你的Python版本
+      
+      # 第三步：安装代码检查工具（flake8）
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8
+      
+      # 第四步：运行代码语法检查
+      - name: Run flake8 check
+        run: flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
